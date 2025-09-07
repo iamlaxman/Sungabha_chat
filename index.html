@@ -1,0 +1,1558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
+  <title>Sungabha Awasiya Ma.Vi. Chat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="icon" type="image/png" href="logo.png">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    * {
+      font-family: 'Inter', sans-serif;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      font-size: 16px;
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+      position: fixed;
+      width: 100%;
+      background: #1C2526; /* Almost Black */
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    input, textarea, select {
+      font-size: 16px !important;
+      -webkit-appearance: none;
+      border-radius: 0;
+    }
+
+    /* Glassmorphism Effects */
+    .glass {
+      backdrop-filter: blur(20px);
+      background: rgba(245, 245, 245, 0.1); /* Off-White with opacity */
+      border: 1px solid rgba(245, 245, 245, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .glass-dark {
+      backdrop-filter: blur(20px);
+      background: rgba(28, 37, 38, 0.3); /* Almost Black with opacity */
+      border: 1px solid rgba(245, 245, 245, 0.1);
+    }
+
+    /* Custom Scrollbar */
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #B0C4DE; /* Cool Gray */
+      border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #FFD700; /* Golden Yellow */
+    }
+
+    /* Message Bubble */
+    .message-appear {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1rem;
+    }
+
+    .message-bubble {
+      max-width: 80%;
+      font-size: 15px;
+      line-height: 1.4;
+      border-radius: 1.5rem;
+      padding: 0.75rem 1rem;
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .message-bubble.sent {
+      background: #8B0000; /* Deep Crimson */
+      color: #FFFDD0; /* Cream */
+      margin-left: auto;
+      border-bottom-right-radius: 0.375rem;
+      box-shadow: 0 4px 20px rgba(139, 0, 0, 0.3);
+    }
+
+    .message-bubble.received {
+      background: #F5F5F5; /* Off-White */
+      color: #1C2526; /* Almost Black */
+      margin-right: auto;
+      border-bottom-left-radius: 0.375rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .message-bubble:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Message Actions */
+    .message-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.25rem;
+      padding: 0.25rem 0.5rem;
+      background: rgba(245, 245, 245, 0.1);
+      border-radius: 1.25rem;
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+      width: fit-content;
+      max-width: 12rem;
+    }
+
+    .message-actions.sent {
+      margin-left: auto;
+    }
+
+    .message-actions.received {
+      margin-right: auto;
+    }
+
+    .message-bubble:hover + .message-actions,
+    .message-actions:hover {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .action-icon {
+      cursor: pointer;
+      color: #FFD700; /* Golden Yellow */
+      font-size: 1rem;
+      padding: 0.375rem;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+
+    .action-icon:hover {
+      background: rgba(255, 215, 0, 0.1);
+      transform: scale(1.1);
+    }
+
+    /* Settings Toggle */
+    .settings-toggle {
+      position: relative;
+      display: inline-block;
+      width: 2.5rem;
+      height: 1.25rem;
+    }
+
+    .settings-toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #808080; /* Medium Gray */
+      transition: 0.3s;
+      border-radius: 1.25rem;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 1rem;
+      width: 1rem;
+      left: 0.125rem;
+      bottom: 0.125rem;
+      background-color: #F5F5F5; /* Off-White */
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #8B0000; /* Deep Crimson */
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(1.25rem);
+    }
+
+    .slider:hover {
+      background-color: #B0C4DE; /* Cool Gray */
+    }
+
+    input:checked + .slider:hover {
+      background-color: #FFD700; /* Golden Yellow */
+    }
+
+    /* Media Queries */
+    @media (max-width: 640px) {
+      .message-bubble {
+        max-width: 85%;
+        font-size: 0.875rem;
+        padding: 0.625rem 0.875rem;
+      }
+
+      .settings-toggle {
+        width: 2.25rem;
+        height: 1.125rem;
+      }
+
+      .slider:before {
+        height: 0.875rem;
+        width: 0.875rem;
+        left: 0.125rem;
+        bottom: 0.125rem;
+      }
+
+      input:checked + .slider:before {
+        transform: translateX(1.125rem);
+      }
+    }
+  </style>
+</head>
+<body class="bg-[#1C2526]">
+  <!-- Home/Login Screen -->
+  <div id="homeScreen" class="min-h-screen flex items-center justify-center p-4 bg-[#4169E1]">
+    <div class="glass rounded-3xl p-8 w-full max-w-md shadow-2xl">
+      <div class="text-center mb-8">
+        <img src="logo.png" alt="Sungabha Awasiya Ma.Vi. Logo" class="w-16 h-16 mx-auto mb-6 rounded-full shadow-xl">
+        <h1 class="text-3xl font-bold text-[#FFFDD0]">Sungabha Awasiya Ma.Vi. Chat</h1>
+        <p class="text-[#F5F5F5] text-sm mt-2">Connect freely with the Sungabha community</p>
+      </div>
+      <div class="space-y-4">
+        <div id="nameWrapper" class="relative">
+          <input 
+            id="usernameInput" 
+            type="text" 
+            placeholder="Enter your name" 
+            class="w-full px-4 py-3 pl-12 rounded-xl bg-[#F5F5F5] text-[#1C2526] border-2 border-transparent focus:border-[#FFD700] focus:bg-[#FFFDD0] shadow-md text-sm"
+            maxlength="30"
+          >
+          <i class="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-[#808080]"></i>
+        </div>
+        <div class="relative">
+          <input 
+            id="emailInput" 
+            type="email" 
+            placeholder="Enter your email" 
+            class="w-full px-4 py-3 pl-12 rounded-xl bg-[#F5F5F5] text-[#1C2526] border-2 border-transparent focus:border-[#FFD700] focus:bg-[#FFFDD0] shadow-md text-sm"
+          >
+          <i class="fas fa-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-[#808080]"></i>
+        </div>
+        <div class="relative">
+          <input 
+            id="passwordInput" 
+            type="password" 
+            placeholder="Enter your password (min 6 chars)" 
+            class="w-full px-4 py-3 pl-12 pr-14 rounded-xl bg-[#F5F5F5] text-[#1C2526] border-2 border-transparent focus:border-[#FFD700] focus:bg-[#FFFDD0] shadow-md text-sm"
+            minlength="6"
+          >
+          <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-[#808080]"></i>
+          <i id="passwordToggle" class="fas fa-eye absolute right-4 top-1/2 transform -translate-y-1/2 text-[#B0C4DE] cursor-pointer hover:text-[#FFD700] p-2"></i>
+        </div>
+        <button id="authBtn" class="w-full bg-[#8B0000] text-[#FFFDD0] font-semibold py-3 px-6 rounded-xl hover:bg-[#FFD700] hover:text-[#1C2526] transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm">
+          <i class="fas fa-rocket mr-2"></i>
+          Create Account
+        </button>
+        <p id="toggleAuth" class="text-center text-[#F5F5F5] cursor-pointer text-sm hover:text-[#FFD700] transition-colors">
+          Already have an account? Sign In
+        </p>
+        <div class="relative">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-[#808080]"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-2 bg-transparent text-[#B0C4DE]">or</span>
+          </div>
+        </div>
+        <button id="googleBtn" class="w-full bg-[#F5F5F5] border border-[#808080] text-[#1C2526] font-semibold py-3 px-6 rounded-xl hover:bg-[#FFFDD0] hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm">
+          <i class="fab fa-google mr-2 text-[#8B0000]"></i>
+          Sign in with Google
+        </button>
+        <p id="authMessage" class="text-center text-sm mt-4 hidden p-3 rounded-lg"></p>
+      </div>
+      <div class="text-center mt-8 text-[#B0C4DE] text-xs">
+        Developed by Laxman Poudel<br>
+        <a href="https://iamlaxman.github.io/sungabha-school/" target="_blank" class="hover:text-[#FFD700] transition-colors">
+          <i class="fas fa-school mr-1"></i>Sungabha Awasiya Ma.Vi.
+        </a><br>
+        <i class="fas fa-envelope mr-1"></i> ethical.laxman@gmail.com<br>
+        <i class="fas fa-phone mr-1"></i> +9779867844454
+      </div>
+    </div>
+  </div>
+
+  <!-- Email Verification Screen -->
+  <div id="verificationScreen" class="hidden min-h-screen flex items-center justify-center p-4 bg-[#4169E1]">
+    <div class="glass rounded-3xl p-8 w-full max-w-md shadow-2xl text-center">
+      <img src="logo.png" alt="Sungabha Awasiya Ma.Vi. Logo" class="w-16 h-16 mx-auto mb-6 rounded-full shadow-xl">
+      <h2 class="text-2xl font-bold text-[#FFFDD0] mb-4">Verify Your Email</h2>
+      <p class="text-[#F5F5F5] mb-6">We have sent a verification email to your account. Check your mail and don't forget to check the spam section.</p>
+      <div class="space-y-4">
+        <button id="resendBtn" class="w-full bg-[#8B0000] text-[#FFFDD0] font-semibold py-3 px-6 rounded-xl hover:bg-[#FFD700] hover:text-[#1C2526] transition-all text-sm">
+          <i class="fas fa-paper-plane mr-2"></i>
+          Resend Verification Email
+        </button>
+        <button id="backToLoginBtn" class="w-full bg-[#FFFDD0] text-[#1C2526] font-semibold py-3 px-6 rounded-xl hover:bg-[#FFD700] transition-all text-sm">
+          <i class="fas fa-arrow-left mr-2"></i>
+          Back to Login
+        </button>
+      </div>
+      <p id="verificationMessage" class="text-center text-sm mt-4 hidden p-3 rounded-lg"></p>
+    </div>
+  </div>
+
+  <!-- Chat Container -->
+  <div id="chatContainer" class="hidden flex flex-col h-screen bg-[#4169E1]">
+    <div class="sticky top-0 z-20 bg-[#F5F5F5] backdrop-blur-xl border-b border-[#808080] shadow-md p-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <button id="backBtn" class="p-2 hover:bg-[#FFFDD0] rounded-full transition-colors">
+            <i class="fas fa-arrow-left text-[#1C2526]"></i>
+          </button>
+          <img src="logo.png" alt="Sungabha Awasiya Ma.Vi. Logo" class="w-10 h-10 rounded-full shadow-lg">
+          <div>
+            <h2 class="font-bold text-[#1C2526] text-lg">Sungabha Awasiya Ma.Vi. Chat</h2>
+            <div id="activeUsersCount" class="text-sm text-[#808080] flex items-center">
+              <div class="w-2 h-2 bg-[#FFD700] rounded-full animate-pulse mr-2"></div>
+              <span id="userCount">0</span> users online
+            </div>
+          </div>
+        </div>
+        <div class="flex space-x-2">
+          <button id="profileBtn" class="p-2 hover:bg-[#FFFDD0] rounded-full transition-colors">
+            <i class="fas fa-user-cog text-[#1C2526] text-lg"></i>
+          </button>
+          <button id="showUsersBtn" class="p-2 hover:bg-[#FFFDD0] rounded-full transition-colors">
+            <i class="fas fa-users text-[#1C2526] text-lg"></i>
+          </button>
+          <button id="settingsBtn" class="p-2 hover:bg-[#FFFDD0] rounded-full transition-colors">
+            <i class="fas fa-cog text-[#1C2526] text-lg"></i>
+          </button>
+        </div>
+      </div>
+      <div id="activeUsersList" class="hidden px-4 pb-3">
+        <div class="glass-dark rounded-2xl p-3">
+          <h3 class="text-sm font-semibold text-[#F5F5F5] mb-2 flex items-center">
+            <i class="fas fa-users mr-2"></i>
+            Active Users
+          </h3>
+          <div id="usersList" class="flex flex-wrap gap-2"></div>
+        </div>
+      </div>
+    </div>
+    <div id="pinnedMessages" class="hidden glass-dark mx-4 mt-2 p-3 rounded-xl"></div>
+    <div id="chatMessages" class="flex-1 overflow-y-auto p-4 custom-scrollbar bg-[#FFFDD0]/80"></div>
+    <div id="replyPreview" class="hidden mx-4 mb-2 p-3 glass rounded-xl flex items-center justify-between">
+      <span class="text-[#F5F5F5] text-sm">Replying to: <span id="replyText" class="font-medium"></span></span>
+      <button id="cancelReply" class="text-[#8B0000] hover:text-[#FFD700]"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="typingIndicator" class="hidden px-4 pb-2">
+      <div class="typing-dots">
+        <div class="typing-dot bg-[#8B0000]"></div>
+        <div class="typing-dot bg-[#8B0000]"></div>
+        <div class="typing-dot bg-[#8B0000]"></div>
+        <span id="typingText" class="ml-2 text-sm text-[#808080]"></span>
+      </div>
+    </div>
+    <div class="sticky bottom-0 bg-[#F5F5F5] backdrop-blur-xl border-t border-[#808080] p-4">
+      <div class="relative">
+        <input 
+          type="text" 
+          id="messageInput" 
+          placeholder="Type a message..." 
+          class="w-full px-4 py-3 pr-16 rounded-xl bg-[#FFFDD0] text-[#1C2526] border-2 border-transparent focus:border-[#FFD700] focus:bg-[#F5F5F5] shadow-md text-sm"
+          maxlength="1000"
+        >
+        <button id="sendBtn" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#8B0000] text-[#FFFDD0] w-10 h-10 rounded-full flex items-center justify-center hover:bg-[#FFD700] hover:text-[#1C2526] transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+      <div class="text-xs text-[#808080] mt-2 text-right">
+        <span id="charCount">0</span>/1000
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Modal -->
+  <div id="profileModal" class="hidden fixed inset-0 bg-[#1C2526]/50 backdrop-blur-sm flex items-center justify-center z-50">
+    <div class="glass rounded-2xl p-6 w-full max-w-[320px] shadow-2xl">
+      <h3 class="font-bold text-xl text-[#FFFDD0] mb-4 flex items-center">
+        <i class="fas fa-user-edit mr-3"></i>
+        Edit Profile
+      </h3>
+      <div class="relative mb-4">
+        <input 
+          id="newNameInput" 
+          type="text" 
+          placeholder="New display name" 
+          class="w-full px-4 py-3 pl-12 rounded-xl bg-[#F5F5F5] text-[#1C2526] border-2 border-transparent focus:border-[#FFD700] focus:bg-[#FFFDD0] shadow-md text-sm"
+          maxlength="30"
+        >
+        <i class="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-[#808080]"></i>
+      </div>
+      <div class="flex justify-end space-x-3">
+        <button id="saveNameBtn" class="bg-[#8B0000] text-[#FFFDD0] py-2 px-6 rounded-xl hover:bg-[#FFD700] hover:text-[#1C2526] transition-all text-sm">
+          <i class="fas fa-check mr-2"></i>Save
+        </button>
+        <button id="closeModalBtn" class="py-2 px-6 rounded-xl border border-[#808080] text-[#F5F5F5] hover:bg-[#B0C4DE] hover:text-[#1C2526] transition-all text-sm">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Message Modal -->
+  <div id="editModal" class="hidden fixed inset-0 bg-[#1C2526]/50 backdrop-blur-sm flex items-center justify-center z-50">
+    <div class="glass rounded-2xl p-6 w-full max-w-[320px] shadow-2xl">
+      <h3 class="font-bold text-xl text-[#FFFDD0] mb-4">Edit Message</h3>
+      <input id="editInput" type="text" class="w-full px-4 py-3 rounded-xl bg-[#F5F5F5] text-[#1C2526] border-2 border-transparent focus:border-[#FFD700] focus:bg-[#FFFDD0] shadow-md text-sm mb-4" maxlength="1000">
+      <div class="flex justify-end space-x-3">
+        <button id="saveEditBtn" class="bg-[#8B0000] text-[#FFFDD0] py-2 px-6 rounded-xl hover:bg-[#FFD700] hover:text-[#1C2526] transition-all text-sm">
+          <i class="fas fa-check mr-2"></i>Save
+        </button>
+        <button id="closeEditBtn" class="py-2 px-6 rounded-xl border border-[#808080] text-[#F5F5F5] hover:bg-[#B0C4DE] hover:text-[#1C2526] transition-all text-sm">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reaction Modal -->
+  <div id="reactionModal" class="hidden fixed inset-0 bg-[#1C2526]/50 backdrop-blur-sm flex items-center justify-center z-50">
+    <div class="glass rounded-2xl p-6 w-full max-w-[320px] shadow-2xl">
+      <h3 class="font-bold text-xl text-[#FFFDD0] mb-4 text-center">Choose Reaction</h3>
+      <div class="flex gap-4 justify-center mb-4 flex-wrap">
+        <button class="reaction-btn text-2xl p-3 rounded-full hover:bg-[#B0C4DE] transition-all" data-reaction="👍">👍</button>
+        <button class="reaction-btn text-2xl p-3 rounded-full hover:bg-[#B0C4DE] transition-all" data-reaction="❤️">❤️</button>
+        <button class="reaction-btn text-2xl p-3 rounded-full hover:bg-[#B0C4DE] transition-all" data-reaction="😂">😂</button>
+        <button class="reaction-btn text-2xl p-3 rounded-full hover:bg-[#B0C4DE] transition-all" data-reaction="😢">😢</button>
+        <button class="reaction-btn text-2xl p-3 rounded-full hover:bg-[#B0C4DE] transition-all" data-reaction="😡">😡</button>
+        <button class="reaction-btn text-2xl p-3 rounded-full hover:bg-[#B0C4DE] transition-all" data-reaction="🔥">🔥</button>
+      </div>
+      <div class="flex justify-center">
+        <button id="closeReactionModal" class="py-2 px-6 rounded-xl border border-[#808080] text-[#F5F5F5] hover:bg-[#B0C4DE] hover:text-[#1C2526] transition-all text-sm">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settingsModal" class="hidden fixed inset-0 bg-[#1C2526]/50 backdrop-blur-sm flex items-center justify-center z-50">
+    <div class="glass rounded-2xl p-6 w-full max-w-[400px] shadow-2xl">
+      <h3 class="font-bold text-xl text-[#FFFDD0] mb-4 flex items-center">
+        <i class="fas fa-cog mr-3"></i>
+        Settings
+      </h3>
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <span class="text-[#F5F5F5] text-sm">Dark Mode</span>
+          <label class="settings-toggle">
+            <input id="darkModeToggle" type="checkbox" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-[#F5F5F5] text-sm">Sound Notifications</span>
+          <label class="settings-toggle">
+            <input id="soundToggle" type="checkbox" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-[#F5F5F5] text-sm">Auto-scroll</span>
+          <label class="settings-toggle">
+            <input id="autoScrollToggle" type="checkbox" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+        <hr class="border-[#808080]">
+        <button id="exportChatBtn" class="w-full py-2 px-4 rounded-xl border border-[#808080] text-[#F5F5F5] hover:bg-[#B0C4DE] hover:text-[#1C2526] transition-all text-sm">
+          <i class="fas fa-download mr-2"></i>Export Chat History
+        </button>
+        <button id="clearChatBtn" class="w-full py-2 px-4 rounded-xl border border-[#8B0000] text-[#8B0000] hover:bg-[#8B0000] hover:text-[#FFFDD0] transition-all text-sm">
+          <i class="fas fa-trash mr-2"></i>Clear Chat History
+        </button>
+      </div>
+      <div class="flex justify-end mt-6">
+        <button id="closeSettingsBtn" class="py-2 px-6 rounded-xl border border-[#808080] text-[#F5F5F5] hover:bg-[#B0C4DE] hover:text-[#1C2526] transition-all text-sm">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getDatabase, ref, set, push, onValue, onDisconnect, serverTimestamp, get, update, remove } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, updateProfile, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCoKAoarWlu8B6cnIw549hfg_UPe8YRSko",
+      authDomain: "nepchat-aac9d.firebaseapp.com",
+      databaseURL: "https://nepchat-aac9d-default-rtdb.firebaseio.com",
+      projectId: "nepchat-aac9d",
+      storageBucket: "nepchat-aac9d.firebasestorage.app",
+      messagingSenderId: "179485804786",
+      appId: "1:179485804786:web:3ec8a2fc563b08c682286b"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const auth = getAuth(app);
+
+    let currentUser = null;
+    let currentDisplayName = null;
+    let currentUsername = null;
+    let typingTimeout;
+    let activeUsers = {};
+    let typingUsers = {};
+    let isSignUp = true;
+    let replyToId = null;
+    let editMessageId = null;
+    let reactionMessageId = null;
+    let touchStartX = 0;
+    let touchEndX = 0;
+    let settings = {
+      darkMode: true,
+      soundNotifications: true,
+      autoScroll: true
+    };
+    const EDIT_TIME_LIMIT = 5 * 60 * 1000;
+
+    const homeScreen = document.getElementById('homeScreen');
+    const verificationScreen = document.getElementById('verificationScreen');
+    const chatScreen = document.getElementById('chatContainer');
+    const nameWrapper = document.getElementById('nameWrapper');
+    const usernameInput = document.getElementById('usernameInput');
+    const emailInput = document.getElementById('emailInput');
+    const passwordInput = document.getElementById('passwordInput');
+    const passwordToggle = document.getElementById('passwordToggle');
+    const authBtn = document.getElementById('authBtn');
+    const toggleAuth = document.getElementById('toggleAuth');
+    const googleBtn = document.getElementById('googleBtn');
+    const authMessage = document.getElementById('authMessage');
+    const verificationMessage = document.getElementById('verificationMessage');
+    const resendBtn = document.getElementById('resendBtn');
+    const backToLoginBtn = document.getElementById('backToLoginBtn');
+    const messageInput = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const charCount = document.getElementById('charCount');
+    const backBtn = document.getElementById('backBtn');
+    const profileBtn = document.getElementById('profileBtn');
+    const settingsBtn = document.getElementById('settingsBtn');
+    const profileModal = document.getElementById('profileModal');
+    const settingsModal = document.getElementById('settingsModal');
+    const newNameInput = document.getElementById('newNameInput');
+    const saveNameBtn = document.getElementById('saveNameBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+    const replyPreview = document.getElementById('replyPreview');
+    const replyText = document.getElementById('replyText');
+    const cancelReply = document.getElementById('cancelReply');
+    const editModal = document.getElementById('editModal');
+    const editInput = document.getElementById('editInput');
+    const saveEditBtn = document.getElementById('saveEditBtn');
+    const closeEditBtn = document.getElementById('closeEditBtn');
+    const reactionModal = document.getElementById('reactionModal');
+    const closeReactionModal = document.getElementById('closeReactionModal');
+    const pinnedMessages = document.getElementById('pinnedMessages');
+
+    initializeEventListeners();
+
+    function initializeEventListeners() {
+      authBtn.addEventListener('click', handleAuth);
+      toggleAuth.addEventListener('click', toggleAuthMode);
+      googleBtn.addEventListener('click', signInWithGoogle);
+      resendBtn.addEventListener('click', resendVerification);
+      backToLoginBtn.addEventListener('click', backToLogin);
+      passwordToggle.addEventListener('click', togglePassword);
+      document.getElementById('showUsersBtn').addEventListener('click', toggleUsersList);
+      backBtn.addEventListener('click', goBack);
+      sendBtn.addEventListener('click', sendMessage);
+      messageInput.addEventListener('keydown', handleMessageInput);
+      messageInput.addEventListener('input', updateCharCount);
+      profileBtn.addEventListener('click', openProfileModal);
+      settingsBtn.addEventListener('click', openSettingsModal);
+      closeModalBtn.addEventListener('click', () => profileModal.classList.add('hidden'));
+      closeSettingsBtn.addEventListener('click', () => settingsModal.classList.add('hidden'));
+      saveNameBtn.addEventListener('click', saveNewName);
+      cancelReply.addEventListener('click', cancelReplyMessage);
+      closeEditBtn.addEventListener('click', () => editModal.classList.add('hidden'));
+      saveEditBtn.addEventListener('click', saveEditedMessage);
+      closeReactionModal.addEventListener('click', () => reactionModal.classList.add('hidden'));
+      document.addEventListener('click', handleReactionClick);
+      document.getElementById('darkModeToggle').addEventListener('click', () => toggleSetting('darkMode'));
+      document.getElementById('soundToggle').addEventListener('click', () => toggleSetting('soundNotifications'));
+      document.getElementById('autoScrollToggle').addEventListener('click', () => toggleSetting('autoScroll'));
+      document.getElementById('exportChatBtn').addEventListener('click', exportChat);
+      document.getElementById('clearChatBtn').addEventListener('click', clearChat);
+      preventMobileZoom();
+    }
+
+    function preventMobileZoom() {
+      document.addEventListener('gesturestart', (e) => e.preventDefault());
+      let lastTouchEnd = 0;
+      document.addEventListener('touchend', (e) => {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) e.preventDefault();
+        lastTouchEnd = now;
+      });
+    }
+
+    function sanitizeUsername(username) {
+      return username.replace(/[.#$[\]]/g, '_');
+    }
+
+    function togglePassword() {
+      const isPassword = passwordInput.type === 'password';
+      passwordInput.type = isPassword ? 'text' : 'password';
+      passwordToggle.className = `fas fa-${isPassword ? 'eye-slash' : 'eye'} absolute right-4 top-1/2 transform -translate-y-1/2 text-[#B0C4DE] cursor-pointer hover:text-[#FFD700] p-2`;
+    }
+
+    function toggleAuthMode() {
+      isSignUp = !isSignUp;
+      if (isSignUp) {
+        nameWrapper.classList.remove('hidden');
+        authBtn.innerHTML = '<i class="fas fa-rocket mr-2"></i> Create Account';
+        toggleAuth.textContent = 'Already have an account? Sign In';
+      } else {
+        nameWrapper.classList.add('hidden');
+        authBtn.innerHTML = '<i class="fas fa-rocket mr-2"></i> Sign In';
+        toggleAuth.textContent = "Don't have an account? Sign Up";
+      }
+      clearAuthMessage();
+      authBtn.disabled = false;
+    }
+
+    async function handleAuth() {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+
+      if (!validateInput(email, password)) return;
+
+      setLoadingState(authBtn, true, 'Processing...');
+
+      try {
+        if (isSignUp) {
+          const name = usernameInput.value.trim();
+          if (!name) {
+            showAuthMessage('Please enter your name.', true);
+            return;
+          }
+          await signUp(name, email, password);
+        } else {
+          await signIn(email, password);
+        }
+      } catch (error) {
+        console.error('Auth error:', error);
+        showAuthMessage(getErrorMessage(error), true);
+      } finally {
+        setLoadingState(authBtn, false, isSignUp ? 'Create Account' : 'Sign In');
+      }
+    }
+
+    function validateInput(email, password) {
+      if (!email || !email.includes('@') || !email.includes('.')) {
+        showAuthMessage('Please enter a valid email address.', true);
+        return false;
+      }
+      if (!password || password.length < 6) {
+        showAuthMessage('Password must be at least 6 characters long.', true);
+        return false;
+      }
+      return true;
+    }
+
+    async function signUp(name, email, password) {
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        
+        await updateProfile(user, { displayName: name });
+        
+        const username = sanitizeUsername(email.split('@')[0]);
+        await set(ref(db, `usernames/${username}`), { 
+          uid: user.uid,
+          email: email,
+          displayName: name 
+        });
+
+        await sendEmailVerification(user);
+        showVerificationScreen(user.email);
+      } catch (error) {
+        if (error.code === 'auth/email-already-in-use') {
+          showAuthMessage('This email is already registered. Try signing in instead.', true);
+        } else {
+          throw error;
+        }
+      }
+    }
+
+    async function signIn(email, password) {
+      await signInWithEmailAndPassword(auth, email, password);
+    }
+
+    async function signInWithGoogle() {
+      setLoadingState(googleBtn, true, 'Processing...');
+      try {
+        const provider = new GoogleAuthProvider();
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        
+        const username = sanitizeUsername(user.email.split('@')[0]);
+        await set(ref(db, `usernames/${username}`), { 
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName 
+        });
+      } catch (error) {
+        console.error('Google sign in error:', error);
+        showAuthMessage(getErrorMessage(error), true);
+      } finally {
+        setLoadingState(googleBtn, false, 'Sign in with Google');
+      }
+    }
+
+    async function resendVerification() {
+      if (!auth.currentUser) {
+        showVerificationMessage('Please sign in first.', true);
+        return;
+      }
+      
+      setLoadingState(resendBtn, true, 'Sending...');
+      try {
+        await sendEmailVerification(auth.currentUser);
+        showVerificationMessage('Verification email sent! Please check your inbox.', false);
+      } catch (error) {
+        showVerificationMessage(getErrorMessage(error), true);
+      } finally {
+        setLoadingState(resendBtn, false, 'Resend Verification Email');
+      }
+    }
+
+    async function backToLogin() {
+      verificationScreen.classList.add('hidden');
+      homeScreen.classList.remove('hidden');
+      clearAuthMessage();
+      clearVerificationMessage();
+      if (auth.currentUser) {
+        await signOut(auth);
+      }
+    }
+
+    function showVerificationScreen(email) {
+      homeScreen.classList.add('hidden');
+      chatScreen.classList.add('hidden');
+      verificationScreen.classList.remove('hidden');
+      showVerificationMessage(`Verification email sent to ${email}. Please check your inbox and don't forget to check the spam section.`, false);
+    }
+
+    function showAuthMessage(message, isError) {
+      authMessage.textContent = message;
+      authMessage.className = `text-center text-sm mt-4 p-3 rounded-lg ${isError ? 'bg-[#8B0000] text-[#FFFDD0] border border-[#FFD700]' : 'bg-[#FFD700] text-[#1C2526] border border-[#8B0000]'}`;
+      authMessage.classList.remove('hidden');
+      setTimeout(() => clearAuthMessage(), 5000);
+    }
+
+    function showVerificationMessage(message, isError) {
+      verificationMessage.textContent = message;
+      verificationMessage.className = `text-center text-sm mt-4 p-3 rounded-lg ${isError ? 'bg-[#8B0000] text-[#FFFDD0] border border-[#FFD700]' : 'bg-[#FFD700] text-[#1C2526] border border-[#8B0000]'}`;
+      verificationMessage.classList.remove('hidden');
+      if (!isError) setTimeout(() => clearVerificationMessage(), 8000);
+    }
+
+    function clearAuthMessage() {
+      authMessage.classList.add('hidden');
+    }
+
+    function clearVerificationMessage() {
+      verificationMessage.classList.add('hidden');
+    }
+
+    function getErrorMessage(error) {
+      const errorMessages = {
+        'auth/user-not-found': 'No account found with this email.',
+        'auth/wrong-password': 'Incorrect password.',
+        'auth/email-already-in-use': 'Email already registered.',
+        'auth/weak-password': 'Password is too weak.',
+        'auth/invalid-email': 'Invalid email address.',
+        'auth/user-disabled': 'Account has been disabled.',
+        'auth/too-many-requests': 'Too many attempts. Try again later.',
+      };
+      return errorMessages[error.code] || error.message;
+    }
+
+    function setLoadingState(button, loading, text) {
+      if (loading) {
+        button.disabled = true;
+        button.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> ${text}`;
+      } else {
+        button.disabled = false;
+        button.innerHTML = `<i class="fas fa-rocket mr-2"></i> ${text}`;
+      }
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        if (user.emailVerified) {
+          currentUser = user;
+          currentDisplayName = user.displayName || user.email.split('@')[0];
+          currentUsername = sanitizeUsername(user.email.split('@')[0]);
+          
+          showChatScreen();
+          joinChat();
+          setTimeout(() => messageInput.focus(), 300);
+        } else {
+          showVerificationScreen(user.email);
+        }
+      } else {
+        currentUser = null;
+        currentDisplayName = null;
+        currentUsername = null;
+        showHomeScreen();
+      }
+    });
+
+    function showChatScreen() {
+      homeScreen.classList.add('hidden');
+      verificationScreen.classList.add('hidden');
+      chatScreen.classList.remove('hidden');
+      chatScreen.classList.add('flex');
+    }
+
+    function showHomeScreen() {
+      chatScreen.classList.add('hidden');
+      chatScreen.classList.remove('flex');
+      verificationScreen.classList.add('hidden');
+      homeScreen.classList.remove('hidden');
+      resetAuthForm();
+    }
+
+    function resetAuthForm() {
+      usernameInput.value = '';
+      emailInput.value = '';
+      passwordInput.value = '';
+      clearAuthMessage();
+      clearVerificationMessage();
+    }
+
+    async function goBack() {
+      if (currentUser) {
+        await Promise.all([
+          set(ref(db, `activeUsers/${currentUser.uid}`), null),
+          set(ref(db, `typing/${currentUser.uid}`), null)
+        ]);
+      }
+      try {
+        await signOut(auth);
+      } catch (error) {
+        console.error('Sign out error:', error);
+      }
+    }
+
+    function joinChat() {
+      const userRef = ref(db, `activeUsers/${currentUser.uid}`);
+      const userStatus = {
+        name: currentDisplayName,
+        username: currentUsername,
+        joinedAt: serverTimestamp(),
+        status: 'online',
+        lastSeen: serverTimestamp()
+      };
+      
+      set(userRef, userStatus);
+      onDisconnect(userRef).set({
+        ...userStatus,
+        status: 'offline',
+        lastSeen: serverTimestamp()
+      });
+
+      const typingRef = ref(db, `typing/${currentUser.uid}`);
+      set(typingRef, false);
+      onDisconnect(typingRef).remove();
+
+      setupRealtimeListeners();
+    }
+
+    function setupRealtimeListeners() {
+      const usersRef = ref(db, 'activeUsers');
+      onValue(usersRef, (snapshot) => {
+        activeUsers = snapshot.val() || {};
+        updateActiveUsers();
+      });
+
+      const messagesRef = ref(db, 'messages');
+      onValue(messagesRef, (snapshot) => {
+        const messagesDiv = document.getElementById('chatMessages');
+        const wasAtBottom = isScrolledToBottom(messagesDiv);
+        
+        messagesDiv.innerHTML = '';
+        const data = snapshot.val() || {};
+        const sortedMessages = Object.entries(data)
+          .map(([key, value]) => ({ id: key, ...value }))
+          .sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+          
+        sortedMessages.forEach(msg => addMessage(msg));
+        
+        if (settings.autoScroll && wasAtBottom) {
+          scrollToBottom();
+        }
+      });
+
+      const typingAllRef = ref(db, 'typing');
+      onValue(typingAllRef, (snapshot) => {
+        typingUsers = snapshot.val() || {};
+        updateTypingIndicator();
+      });
+
+      const pinnedRef = ref(db, 'pinnedMessages');
+      onValue(pinnedRef, (snapshot) => {
+        updatePinnedMessages(snapshot.val() || {});
+      });
+    }
+
+    function sendMessage() {
+      const text = messageInput.value.trim();
+      if (!text) return;
+
+      const messageData = {
+        user: currentDisplayName,
+        username: currentUsername,
+        text: text,
+        timestamp: Date.now(),
+        replyTo: replyToId,
+        deleted: false,
+        edited: false,
+        type: 'text'
+      };
+
+      push(ref(db, 'messages'), messageData)
+        .then(() => {
+          messageInput.value = '';
+          updateCharCount();
+          updateTyping(false);
+          cancelReplyMessage();
+          
+          if (settings.soundNotifications) {
+            playNotificationSound();
+          }
+        })
+        .catch((error) => {
+          console.error('Error sending message:', error);
+          showTemporaryError('Failed to send message');
+        });
+    }
+
+    function handleMessageInput(e) {
+      updateTyping(true);
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => updateTyping(false), 2000);
+      
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    }
+
+    function updateCharCount() {
+      const count = messageInput.value.length;
+      charCount.textContent = count;
+      sendBtn.disabled = count === 0;
+      
+      charCount.className = count > 800 ? 'text-[#8B0000]' : count > 600 ? 'text-[#FFD700]' : 'text-[#808080]';
+    }
+
+    function updateTyping(status) {
+      if (currentUser) {
+        set(ref(db, `typing/${currentUser.uid}`), status ? currentDisplayName : false);
+      }
+    }
+
+    function addMessage(msg) {
+      const chatDiv = document.getElementById('chatMessages');
+      const messageDiv = document.createElement('div');
+      const isCurrentUser = msg.username === currentUsername;
+      const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      
+      messageDiv.className = `message-appear`;
+      messageDiv.dataset.id = msg.id;
+
+      messageDiv.addEventListener('touchstart', handleTouchStart, { passive: true });
+      messageDiv.addEventListener('touchmove', handleTouchMove, { passive: true });
+      messageDiv.addEventListener('touchend', (e) => handleTouchEnd(e, msg.id, msg.text), { passive: true });
+      
+      let content = '';
+      if (msg.deleted) {
+        content = '<div class="text-[#808080] italic text-sm">This message was deleted</div>';
+      } else {
+        content = `
+          <div class="message-content">
+            <div class="leading-relaxed">${parseMentions(escapeHtml(msg.text))}</div>
+          </div>
+        `;
+        
+        if (msg.replyTo) {
+          addQuotedMessage(messageDiv, msg.replyTo);
+        }
+      }
+
+      let reactionsHtml = '';
+      if (msg.reactions) {
+        reactionsHtml = buildReactionsHtml(msg.reactions, isCurrentUser);
+      }
+
+      let readReceipt = buildReadReceipt(msg, isCurrentUser);
+
+      messageDiv.innerHTML = `
+        <div class="message-bubble ${isCurrentUser ? 'sent' : 'received'}">
+          ${!isCurrentUser ? `<div class="text-xs font-semibold ${isCurrentUser ? 'text-[#FFFDD0]' : 'text-[#4169E1]'} mb-1">${escapeHtml(msg.user)}</div>` : ''}
+          ${content}
+          <div class="text-xs ${isCurrentUser ? 'text-[#FFFDD0]/70' : 'text-[#808080]'} mt-2 flex items-center justify-end gap-1">
+            ${time}
+            ${msg.edited ? '<span class="italic">edited</span>' : ''}
+            ${readReceipt}
+          </div>
+        </div>
+        ${reactionsHtml}
+      `;
+      
+      addMessageActions(messageDiv, msg, isCurrentUser);
+      
+      chatDiv.appendChild(messageDiv);
+      
+      if (!isCurrentUser && !msg.views?.[currentUser.uid]) {
+        markMessageAsViewed(msg.id);
+      }
+    }
+
+    function addMessageActions(messageDiv, msg, isCurrentUser) {
+      const actionsDiv = document.createElement('div');
+      actionsDiv.className = `message-actions ${isCurrentUser ? 'sent' : 'received'}`;
+      
+      const canEdit = isCurrentUser && !msg.deleted && (Date.now() - msg.timestamp < EDIT_TIME_LIMIT);
+      
+      actionsDiv.innerHTML = `
+        <i class="fas fa-reply action-icon" onclick="replyToMessage('${msg.id}', '${escapeHtml(msg.text)}')"></i>
+        ${canEdit ? `
+          <i class="fas fa-edit action-icon" onclick="editMessage('${msg.id}', '${escapeHtml(msg.text)}', ${msg.timestamp})"></i>
+          <i class="fas fa-trash action-icon" onclick="deleteMessage('${msg.id}')"></i>
+        ` : ''}
+        <i class="fas fa-smile action-icon" onclick="openReactionModal('${msg.id}')"></i>
+        <i class="fas fa-thumbtack action-icon" onclick="pinMessage('${msg.id}')"></i>
+      `;
+      
+      messageDiv.appendChild(actionsDiv);
+    }
+
+    async function addQuotedMessage(messageDiv, replyToId) {
+      try {
+        const snap = await get(ref(db, `messages/${replyToId}`));
+        const repliedMsg = snap.val();
+        if (repliedMsg && !repliedMsg.deleted) {
+          const quoteDiv = document.createElement('div');
+          quoteDiv.className = 'bg-[#1C2526]/10 border-l-4 border-[#FFD700] p-2 mb-2 rounded text-sm';
+          quoteDiv.innerHTML = `<strong>${escapeHtml(repliedMsg.user)}</strong>: ${escapeHtml(repliedMsg.text.substring(0, 100))}${repliedMsg.text.length > 100 ? '...' : ''}`;
+          messageDiv.querySelector('.message-content').insertAdjacentElement('afterbegin', quoteDiv);
+        }
+      } catch (error) {
+        console.error('Error loading quoted message:', error);
+      }
+    }
+
+    function buildReactionsHtml(reactions, isCurrentUser) {
+      const reactionCounts = {};
+      Object.entries(reactions).forEach(([userId, reaction]) => {
+        reactionCounts[reaction] = (reactionCounts[reaction] || 0) + 1;
+      });
+      
+      let html = `<div class="flex gap-2 mt-2 ${isCurrentUser ? 'justify-end' : 'justify-start'}">`;
+      Object.entries(reactionCounts).forEach(([reaction, count]) => {
+        html += `<span class="bg-[#F5F5F5]/20 backdrop-blur-sm rounded-full px-2 py-1 text-sm flex items-center gap-1">
+          ${reaction} <span class="text-xs">${count}</span>
+        </span>`;
+      });
+      html += '</div>';
+      return html;
+    }
+
+    function buildReadReceipt(msg, isCurrentUser) {
+      if (!isCurrentUser) return '';
+      
+      const totalActiveUsers = Object.keys(activeUsers).length;
+      const viewCount = msg.views ? Object.keys(msg.views).length : 0;
+      
+      if (viewCount >= totalActiveUsers - 1) {
+        return '<i class="fas fa-check-double text-[#FFD700]"></i>';
+      } else if (viewCount > 0) {
+        return '<i class="fas fa-check text-[#FFD700]"></i>';
+      }
+      return '';
+    }
+
+    function parseMentions(text) {
+      return text.replace(/@(\w+)/g, '<span class="font-semibold text-[#FFD700]">@$1</span>');
+    }
+
+    function markMessageAsViewed(messageId) {
+      if (currentUser) {
+        set(ref(db, `messages/${messageId}/views/${currentUser.uid}`), serverTimestamp());
+      }
+    }
+
+    window.editMessage = function(id, text, timestamp) {
+      if (Date.now() - timestamp > EDIT_TIME_LIMIT) {
+        showTemporaryError('Edit time limit exceeded (5 minutes).');
+        return;
+      }
+      editMessageId = id;
+      editInput.value = text;
+      editModal.classList.remove('hidden');
+      editInput.focus();
+    }
+
+    function saveEditedMessage() {
+      const newText = editInput.value.trim();
+      if (!newText) {
+        showTemporaryError('Message cannot be empty.');
+        return;
+      }
+
+      update(ref(db, `messages/${editMessageId}`), { 
+        text: newText, 
+        edited: true,
+        editedAt: Date.now()
+      })
+      .then(() => {
+        editModal.classList.add('hidden');
+      })
+      .catch((error) => {
+        console.error('Error editing message:', error);
+        showTemporaryError('Failed to edit message.');
+      });
+    }
+
+    window.deleteMessage = function(id) {
+      if (confirm('Are you sure you want to delete this message? This cannot be undone.')) {
+        update(ref(db, `messages/${id}`), { 
+          deleted: true, 
+          text: '',
+          deletedAt: Date.now()
+        })
+        .catch((error) => {
+          console.error('Error deleting message:', error);
+          showTemporaryError('Failed to delete message.');
+        });
+      }
+    }
+
+    window.replyToMessage = function(id, text) {
+      replyToId = id;
+      replyText.textContent = text.substring(0, 50) + (text.length > 50 ? '...' : '');
+      replyPreview.classList.remove('hidden');
+      messageInput.focus();
+    }
+
+    function cancelReplyMessage() {
+      replyToId = null;
+      replyPreview.classList.add('hidden');
+    }
+
+    window.openReactionModal = function(id) {
+      reactionMessageId = id;
+      reactionModal.classList.remove('hidden');
+    }
+
+    function handleReactionClick(e) {
+      if (e.target.classList.contains('reaction-btn')) {
+        const reaction = e.target.dataset.reaction;
+        addReaction(reactionMessageId, reaction);
+        reactionModal.classList.add('hidden');
+      }
+    }
+
+    function addReaction(messageId, reaction) {
+      if (!currentUser || !messageId) return;
+      const reactionRef = ref(db, `messages/${messageId}/reactions/${currentUser.uid}`);
+      set(reactionRef, reaction).catch((error) => {
+        console.error('Error adding reaction:', error);
+        showTemporaryError('Failed to add reaction.');
+      });
+    }
+
+    window.pinMessage = function(id) {
+      if (confirm('Pin this message for everyone to see?')) {
+        set(ref(db, `pinnedMessages/${id}`), {
+          pinnedBy: currentUser.uid,
+          pinnedAt: serverTimestamp()
+        })
+        .catch((error) => {
+          console.error('Error pinning message:', error);
+          showTemporaryError('Failed to pin message.');
+        });
+      }
+    }
+
+    window.unpinMessage = function(id) {
+      if (confirm('Unpin this message?')) {
+        remove(ref(db, `pinnedMessages/${id}`))
+        .catch((error) => {
+          console.error('Error unpinning message:', error);
+          showTemporaryError('Failed to unpin message.');
+        });
+      }
+    }
+
+    function updatePinnedMessages(pinned) {
+      const pinnedDiv = document.getElementById('pinnedMessages');
+      pinnedDiv.innerHTML = '';
+      
+      if (Object.keys(pinned).length > 0) {
+        pinnedDiv.classList.remove('hidden');
+        pinnedDiv.innerHTML = '<h4 class="text-[#F5F5F5] font-semibold mb-2 flex items-center"><i class="fas fa-thumbtack mr-2"></i>Pinned Messages</h4>';
+        
+        Object.keys(pinned).forEach(async (messageId) => {
+          try {
+            const snap = await get(ref(db, `messages/${messageId}`));
+            const msg = snap.val();
+            if (msg && !msg.deleted) {
+              const pinDiv = document.createElement('div');
+              pinDiv.className = 'flex items-center justify-between bg-[#F5F5F5]/10 rounded-lg p-2 mb-2';
+              pinDiv.innerHTML = `
+                <span class="text-[#F5F5F5] text-sm"><strong>${escapeHtml(msg.user)}</strong>: ${escapeHtml(msg.text.substring(0, 60))}${msg.text.length > 60 ? '...' : ''}</span>
+                <button onclick="unpinMessage('${messageId}')" class="text-[#8B0000] hover:text-[#FFD700] text-sm p-1">
+                  <i class="fas fa-times"></i>
+                </button>
+              `;
+              pinnedDiv.appendChild(pinDiv);
+            }
+          } catch (error) {
+            console.error('Error loading pinned message:', error);
+          }
+        });
+      } else {
+        pinnedDiv.classList.add('hidden');
+      }
+    }
+
+    function handleTouchStart(e) {
+      touchStartX = e.changedTouches[0].screenX;
+      e.currentTarget.style.transition = 'transform 0.1s ease';
+    }
+
+    function handleTouchMove(e) {
+      touchEndX = e.changedTouches[0].screenX;
+      const diff = touchStartX - touchEndX;
+      if (diff > 0 && diff < 100) {
+        e.currentTarget.style.transform = `translateX(-${diff * 0.3}px)`;
+      }
+    }
+
+    function handleTouchEnd(e, messageId, text) {
+      const diff = touchStartX - touchEndX;
+      e.currentTarget.style.transform = '';
+      e.currentTarget.style.transition = 'transform 0.3s ease';
+      
+      if (diff > 50) {
+        replyToMessage(messageId, text);
+      }
+      
+      touchStartX = 0;
+      touchEndX = 0;
+    }
+
+    function updateActiveUsers() {
+      const userCount = Object.keys(activeUsers).length;
+      document.getElementById('userCount').textContent = userCount;
+      
+      const usersList = document.getElementById('usersList');
+      usersList.innerHTML = '';
+      
+      Object.entries(activeUsers).forEach(([uid, userData]) => {
+        const userBadge = document.createElement('div');
+        userBadge.className = 'flex items-center gap-2 bg-[#F5F5F5]/90 rounded-full p-2 text-sm font-medium text-[#1C2526] cursor-pointer hover:bg-[#FFFDD0] transition-all shadow-md';
+        
+        const isOnline = userData.status === 'online';
+        const statusColor = isOnline ? 'bg-[#FFD700]' : 'bg-[#808080]';
+        
+        userBadge.innerHTML = `
+          <div class="w-2 h-2 ${statusColor} rounded-full ${isOnline ? 'animate-pulse' : ''}"></div>
+          <span>${escapeHtml(userData.name)}</span>
+          <span class="text-xs text-[#808080]">@${escapeHtml(userData.username)}</span>
+        `;
+        
+        userBadge.addEventListener('click', () => {
+          messageInput.value += `@${userData.username} `;
+          messageInput.focus();
+          toggleUsersList();
+        });
+        
+        usersList.appendChild(userBadge);
+      });
+    }
+
+    function updateTypingIndicator() {
+      const typingUsersList = Object.entries(typingUsers)
+        .filter(([uid, userName]) => uid !== currentUser.uid && userName)
+        .map(([uid, userName]) => userName);
+      
+      const typingIndicator = document.getElementById('typingIndicator');
+      const typingText = document.getElementById('typingText');
+      
+      if (typingUsersList.length > 0) {
+        const text = typingUsersList.length === 1 
+          ? `${typingUsersList[0]} is typing...`
+          : `${typingUsersList.slice(0, 2).join(', ')}${typingUsersList.length > 2 ? ` and ${typingUsersList.length - 2} others` : ''} are typing...`;
+        typingText.textContent = text;
+        typingIndicator.classList.remove('hidden');
+      } else {
+        typingIndicator.classList.add('hidden');
+      }
+    }
+
+    function toggleUsersList() {
+      const usersList = document.getElementById('activeUsersList');
+      usersList.classList.toggle('hidden');
+    }
+
+    function openProfileModal() {
+      newNameInput.value = currentDisplayName;
+      profileModal.classList.remove('hidden');
+      newNameInput.focus();
+    }
+
+    function openSettingsModal() {
+      updateSettingsDisplay();
+      settingsModal.classList.remove('hidden');
+    }
+
+    async function saveNewName() {
+      const newName = newNameInput.value.trim();
+      if (!newName || newName === currentDisplayName) {
+        profileModal.classList.add('hidden');
+        return;
+      }
+      
+      if (newName.length < 2 || newName.length > 30) {
+        showTemporaryError('Name must be between 2 and 30 characters.');
+        return;
+      }
+      
+      try {
+        await updateProfile(auth.currentUser, { displayName: newName });
+        currentDisplayName = newName;
+        await set(ref(db, `activeUsers/${currentUser.uid}/name`), newName);
+        profileModal.classList.add('hidden');
+        showTemporarySuccess('Name updated successfully!');
+      } catch (error) {
+        console.error('Error updating name:', error);
+        showTemporaryError('Failed to update name.');
+      }
+    }
+
+    function toggleSetting(setting) {
+      settings[setting] = !settings[setting];
+      updateSettingsDisplay();
+      localStorage.setItem('chatSettings', JSON.stringify(settings));
+      
+      if (setting === 'darkMode') {
+        showTemporarySuccess(`${setting} ${settings[setting] ? 'enabled' : 'disabled'}`);
+      }
+    }
+
+    function updateSettingsDisplay() {
+      const toggles = {
+        darkMode: document.getElementById('darkModeToggle'),
+        soundNotifications: document.getElementById('soundToggle'),
+        autoScroll: document.getElementById('autoScrollToggle')
+      };
+      
+      Object.entries(settings).forEach(([key, value]) => {
+        toggles[key].checked = value;
+      });
+    }
+
+    function exportChat() {
+      get(ref(db, 'messages')).then((snapshot) => {
+        const messages = snapshot.val() || {};
+        const sortedMessages = Object.entries(messages)
+          .map(([key, value]) => ({ id: key, ...value }))
+          .sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+        
+        const chatData = sortedMessages.map(msg => ({
+          user: msg.user,
+          text: msg.deleted ? '[Deleted]' : msg.text,
+          timestamp: new Date(msg.timestamp).toLocaleString(),
+          edited: msg.edited || false
+        }));
+        
+        const dataStr = JSON.stringify(chatData, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `sungabha-chat-export-${new Date().toISOString().split('T')[0]}.json`;
+        link.click();
+        URL.revokeObjectURL(url);
+        
+        showTemporarySuccess('Chat history exported successfully!');
+      }).catch((error) => {
+        console.error('Export error:', error);
+        showTemporaryError('Failed to export chat history.');
+      });
+    }
+
+    function clearChat() {
+      if (confirm('Are you sure you want to clear all chat history? This cannot be undone and will affect all users.')) {
+        if (confirm('This will permanently delete all messages for everyone. Are you absolutely sure?')) {
+          set(ref(db, 'messages'), null)
+            .then(() => {
+              showTemporarySuccess('Chat history cleared successfully!');
+            })
+            .catch((error) => {
+              console.error('Clear chat error:', error);
+              showTemporaryError('Failed to clear chat history.');
+            });
+        }
+      }
+    }
+
+    function scrollToBottom() {
+      const chatMessages = document.getElementById('chatMessages');
+      setTimeout(() => {
+        chatMessages.scrollTo({
+          top: chatMessages.scrollHeight,
+          behavior: 'smooth'
+        });
+      }, 100);
+    }
+
+    function isScrolledToBottom(element) {
+      return element.scrollHeight - element.clientHeight <= element.scrollTop + 1;
+    }
+
+    function escapeHtml(text) {
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+      return text.replace(/[&<>"']/g, (m) => map[m]);
+    }
+
+    function showTemporaryError(message) {
+      showTemporaryMessage(message, 'error');
+    }
+
+    function showTemporarySuccess(message) {
+      showTemporaryMessage(message, 'success');
+    }
+
+    function showTemporaryMessage(message, type) {
+      const toast = document.createElement('div');
+      toast.className = `fixed top-4 right-4 z-50 p-3 rounded-lg shadow-lg text-sm font-medium transition-all duration-300 transform translate-x-full ${
+        type === 'error' 
+          ? 'bg-[#8B0000] text-[#FFFDD0]' 
+          : 'bg-[#FFD700] text-[#1C2526]'
+      }`;
+      toast.textContent = message;
+      
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.remove('translate-x-full');
+      }, 100);
+      
+      setTimeout(() => {
+        toast.classList.add('translate-x-full');
+        setTimeout(() => {
+          if (toast.parentNode) {
+            toast.parentNode.removeChild(toast);
+          }
+        }, 300);
+      }, 3000);
+    }
+
+    function playNotificationSound() {
+      if (typeof AudioContext !== 'undefined' || typeof webkitAudioContext !== 'undefined') {
+        const AudioContextClass = AudioContext || webkitAudioContext;
+        const audioContext = new AudioContextClass();
+        
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+        oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
+        
+        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.01);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.2);
+      }
+    }
+
+    const savedSettings = localStorage.getItem('chatSettings');
+    if (savedSettings) {
+      settings = { ...settings, ...JSON.parse(savedSettings) };
+    }
+
+    updateCharCount();
+
+    window.addEventListener('resize', () => {
+      if (settings.autoScroll) {
+        setTimeout(scrollToBottom, 100);
+      }
+    });
+    
+    window.addEventListener('orientationchange', () => {
+      if (settings.autoScroll) {
+        setTimeout(scrollToBottom, 300);
+      }
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && currentUser) {
+        const chatMessages = document.getElementById('chatMessages');
+        const messageElements = chatMessages.querySelectorAll('[data-id]');
+        messageElements.forEach(el => {
+          const messageId = el.dataset.id;
+          if (messageId) {
+            markMessageAsViewed(messageId);
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
