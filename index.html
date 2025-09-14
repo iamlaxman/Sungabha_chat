@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sungabha Chat - Secure and fast chat app for students and teachers with group and private chats, powered by Firebase.">
+  <meta property="og:title" content="Sungabha Chat - School Chat App">
+  <meta property="og:description" content="Connect seamlessly with your school community through Sungabha Chat, featuring secure group and private chats with file sharing.">
+  <meta property="og:image" content="share.png">
+  <meta property="og:url" content="https://iamlaxman.github.io/Sungabha_chat/">
+  <title>Sungabha Chat - School Chat App</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <!-- Typed.js CDN -->
+  <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+  <style>
+    /* Custom Animations */
+    .fade-in { animation: fadeIn 0.8s ease-out forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+    .slide-up { animation: slideUp 1s ease-out forwards; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+    .scale-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .scale-hover:hover { transform: scale(1.03); box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08); }
+
+    .btn-hover { transition: background-color 0.2s ease, transform 0.2s ease; }
+    .btn-hover:hover { transform: translateY(-2px); }
+
+    .icon-hover { transition: transform 0.3s ease, background-color 0.3s ease; }
+    .icon-hover:hover { transform: rotate(360deg); }
+
+    .card-reveal { animation: cardReveal 0.8s ease-out forwards; }
+    @keyframes cardReveal {
+      from { opacity: 0; transform: translateX(-20px) scale(0.98); }
+      to { opacity: 1; transform: translateX(0) scale(1); }
+    }
+
+    .section-reveal { animation: sectionReveal 0.8s ease-out forwards; }
+    @keyframes sectionReveal {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Smooth Scroll */
+    html { scroll-behavior: smooth; }
+
+    /* Light Color Enhancements */
+    body { background: linear-gradient(to bottom, #ffffff, #f3f4f6); color: #1f2937; }
+
+    /* Optimized Animated Backgrounds */
+    .section-bg {
+      position: relative;
+      overflow: hidden;
+    }
+    .section-bg::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(234, 179, 8, 0.1) 10%, transparent 20%);
+      background-size: 150px 150px;
+      animation: bgFlow 12s ease-in-out infinite;
+      z-index: -1;
+      opacity: 0.25;
+    }
+    @keyframes bgFlow {
+      0% { transform: translate(0, 0); }
+      50% { transform: translate(-30px, 30px); }
+      100% { transform: translate(0, 0); }
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f3f4f6;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #eab308;
+      border-radius: 3px;
+    }
+
+    /* Navbar Animation */
+    nav { animation: slideDown 0.6s ease-out; }
+    @keyframes slideDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+  </style>
+</head>
+<body class="font-sans antialiased">
+
+  <!-- Navbar -->
+  <nav class="bg-white/95 backdrop-blur-sm fixed w-full z-20 top-0 start-0 border-b border-gray-100 shadow-sm">
+    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+      <a href="#" class="flex items-center space-x-2 fade-in" style="animation-delay: 0.1s;">
+        <!-- Custom Logo -->
+        <img src="logo.png" alt="Sungabha Chat Logo" class="h-8">
+        <span class="self-center text-xl font-bold whitespace-nowrap">Sungabha Chat</span>
+      </a>
+      <button id="menu-toggle" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+        <i class="bi bi-list text-2xl"></i>
+      </button>
+      <div class="hidden w-full md:flex md:w-auto" id="navbar">
+        <ul class="flex flex-col p-4 mt-4 rounded-lg bg-white md:space-x-8 md:flex-row md:mt-0 md:border-0 md:bg-transparent">
+          <li><a href="#features" class="nav-link block py-2 px-3 hover:text-yellow-400 transition-colors fade-in" style="animation-delay: 0.2s;">Features</a></li>
+          <li><a href="#school-website" class="nav-link block py-2 px-3 hover:text-yellow-400 transition-colors fade-in" style="animation-delay: 0.3s;">School Website</a></li>
+          <li><a href="#privacy" class="nav-link block py-2 px-3 hover:text-yellow-400 transition-colors fade-in" style="animation-delay: 0.4s;">Privacy</a></li>
+          <li><a href="#contact" class="nav-link block py-2 px-3 hover:text-yellow-400 transition-colors fade-in" style="animation-delay: 0.5s;">Contact</a></li>
+          <li><a href="#terms" class="nav-link block py-2 px-3 hover:text-yellow-400 transition-colors fade-in" style="animation-delay: 0.6s;">Terms</a></li>
+          <li><a href="#developer" class="nav-link block py-2 px-3 hover:text-yellow-400 transition-colors fade-in" style="animation-delay: 0.7s;">Developer</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="min-h-screen flex flex-col justify-center items-center text-center px-4 sm:px-6 md:px-12 pt-20 sm:pt-24 md:pt-28 lg:pt-32 section-bg">
+    <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+      <span id="typed-text"></span>
+    </h1>
+    <p class="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 mb-8 max-w-xl sm:max-w-2xl mx-auto fade-in" style="animation-delay: 0.3s;">Sungabha Chat empowers students and teachers with secure, fast, and reliable communication for a vibrant school community.</p>
+    <a href="sungabha_chat.html" class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 md:px-8 md:py-4 rounded-full text-base md:text-lg font-semibold transition btn-hover shadow-md fade-in" style="animation-delay: 0.5s;">Get Started</a>
+    
+    <!-- Dynamic Image with Animation -->
+    <div class="mt-10 w-full flex justify-center fade-in" style="animation-delay: 0.7s;">
+      <img id="heroImage" src="mockup.png" 
+           alt="Chat Mockup" 
+           class="rounded-2xl shadow-lg max-w-full h-auto object-contain max-h-[350px] sm:max-h-[400px] md:max-h-[450px]">
+    </div>
+  </section>
+
+  <!-- School Website Section -->
+  <section id="school-website" class="py-16 sm:py-20 md:py-24 text-center px-4 sm:px-6 md:px-12 section-bg section-reveal">
+    <div class="max-w-3xl mx-auto p-6 sm:p-8 bg-white rounded-2xl shadow-lg scale-hover card-reveal">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-gray-800 fade-in" style="animation-delay: 0.2s;">Explore Our School Website!</h2>
+      <p class="text-base sm:text-lg md:text-xl text-gray-600 mb-6 max-w-2xl mx-auto fade-in" style="animation-delay: 0.3s;">We've crafted a stunning website for Sungabha H.S. Boarding School. Check it out!</p>
+      <a href="https://iamlaxman.github.io/sungabha-school" target="_blank" class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-full text-base md:text-lg font-semibold transition btn-hover shadow-md fade-in" style="animation-delay: 0.4s;">Visit Now</a>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="py-16 sm:py-20 md:py-24 bg-gray-50 text-center px-4 sm:px-6 md:px-12 section-bg section-reveal">
+    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 md:mb-12 fade-in" style="animation-delay: 0.2s;">Why Choose Sungabha Chat?</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto">
+      <div class="p-6 bg-white rounded-2xl shadow-lg scale-hover card-reveal" style="animation-delay: 0.3s;">
+        <i class="bi bi-people-fill text-yellow-400 text-3xl md:text-4xl mb-4"></i>
+        <h3 class="text-lg md:text-xl font-semibold mb-2">Group & Private Chats</h3>
+        <p class="text-gray-600 text-sm md:text-base leading-relaxed">Engage in group discussions with classmates or connect privately with teachers and peers.</p>
+      </div>
+      <div class="p-6 bg-white rounded-2xl shadow-lg scale-hover card-reveal" style="animation-delay: 0.4s;">
+        <i class="bi bi-file-earmark-arrow-up-fill text-yellow-400 text-3xl md:text-4xl mb-4"></i>
+        <h3 class="text-lg md:text-xl font-semibold mb-2">File Sharing</h3>
+        <p class="text-gray-600 text-sm md:text-base leading-relaxed">Share notes, assignments, and resources securely within chats, powered by Firebase.</p>
+      </div>
+      <div class="p-6 bg-white rounded-2xl shadow-lg scale-hover card-reveal" style="animation-delay: 0.5s;">
+        <i class="bi bi-shield-lock-fill text-yellow-400 text-3xl md:text-4xl mb-4"></i>
+        <h3 class="text-lg md:text-xl font-semibold mb-2">Secure & Reliable</h3>
+        <p class="text-gray-600 text-sm md:text-base leading-relaxed">Firebase's encryption and real-time database ensure fast, secure messaging.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Privacy Section -->
+  <section id="privacy" class="py-16 sm:py-20 md:py-24 text-center px-4 sm:px-6 md:px-12 section-bg section-reveal">
+    <div class="max-w-3xl mx-auto p-6 sm:p-8 bg-white rounded-2xl shadow-lg scale-hover card-reveal" style="animation-delay: 0.2s;">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Privacy First</h2>
+      <p class="text-gray-600 text-sm md:text-base leading-relaxed">Your data is protected with Firebase's robust security. Messages are encrypted, stored securely, and never shared.</p>
+    </div>
+  </section>
+
+  <!-- Terms Section -->
+  <section id="terms" class="py-16 sm:py-20 md:py-24 bg-gray-50 text-center px-4 sm:px-6 md:px-12 section-bg section-reveal">
+    <div class="max-w-3xl mx-auto p-6 sm:p-8 bg-white rounded-2xl shadow-lg scale-hover card-reveal" style="animation-delay: 0.2s;">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Terms of Service</h2>
+      <p class="text-gray-600 text-sm md:text-base leading-relaxed">Agree to school guidelines and maintain respectful communication. Misuse may restrict access.</p>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-16 sm:py-20 md:py-24 text-center px-4 sm:px-6 md:px-12 section-bg section-reveal">
+    <div class="max-w-3xl mx-auto p-6 sm:p-8 bg-white rounded-2xl shadow-lg scale-hover card-reveal" style="animation-delay: 0.2s;">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Get in Touch</h2>
+      <p class="text-gray-600 text-sm md:text-base mb-4">For support or inquiries, reach us at:</p>
+      <a href="mailto:info@sungabhaschool.edu.np" class="text-yellow-400 font-semibold hover:underline">info@sungabhaschool.edu.np</a>
+    </div>
+  </section>
+
+  <!-- Developer Section -->
+  <section id="developer" class="py-16 sm:py-20 md:py-24 bg-gray-50 text-center px-4 sm:px-6 md:px-12 section-bg section-reveal">
+    <div class="max-w-3xl mx-auto p-6 sm:p-8 bg-white rounded-2xl shadow-lg scale-hover card-reveal" style="animation-delay: 0.2s;">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Meet the Developer</h2>
+      <p class="text-gray-600 text-sm md:text-base mb-4">Developed by Laxman Poudel</p>
+      <div class="flex justify-center space-x-4 sm:space-x-6">
+        <a href="mailto:ethical.laxman@gmail.com" class="bg-yellow-500 hover:bg-yellow-600 text-white p-3 sm:p-4 rounded-full btn-hover shadow-md icon-hover">
+          <i class="bi bi-envelope-fill text-lg sm:text-xl"></i>
+        </a>
+        <a href="tel:+9779867844454" class="bg-yellow-500 hover:bg-yellow-600 text-white p-3 sm:p-4 rounded-full btn-hover shadow-md icon-hover">
+          <i class="bi bi-telephone-fill text-lg sm:text-xl"></i>
+        </a>
+        <a href="https://iamlaxman.github.io/Portfolio-website-" target="_blank" class="bg-yellow-500 hover:bg-yellow-600 text-white p-3 sm:p-4 rounded-full btn-hover shadow-md icon-hover">
+          <i class="bi bi-globe text-lg sm:text-xl"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-white py-6 text-center text-gray-500 text-sm border-t border-gray-100 fade-in" style="animation-delay: 0.2s;">
+    <p>&copy; 2025 Sungabha H.S. Boarding School - All Rights Reserved.</p>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    // Typed.js for Hero Section
+    document.addEventListener('DOMContentLoaded', () => {
+      new Typed('#typed-text', {
+        strings: ['Connect.', 'Collaborate.', 'Communicate.', 'Connect. Collaborate. Communicate.'],
+        typeSpeed: 40,
+        backSpeed: 20,
+        backDelay: 800,
+        loop: true,
+        showCursor: true,
+        cursorChar: '|',
+      });
+    });
+
+    // Navbar Toggle for Mobile
+    const menuToggle = document.getElementById('menu-toggle');
+    const navbar = document.getElementById('navbar');
+
+    menuToggle.addEventListener('click', () => {
+      navbar.classList.toggle('hidden');
+    });
+
+    // Hide Navbar on Outside Click
+    document.addEventListener('click', (event) => {
+      const isClickInsideNavbar = navbar.contains(event.target);
+      const isClickOnToggle = menuToggle.contains(event.target);
+      if (!isClickInsideNavbar && !isClickOnToggle && !navbar.classList.contains('hidden')) {
+        navbar.classList.add('hidden');
+      }
+    });
+
+    // Hide Navbar on Link Click
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        if (!navbar.classList.contains('hidden')) {
+          navbar.classList.add('hidden');
+        }
+      });
+    });
+
+    // Dynamic Hero Image Adjustment
+    function adjustHeroImage() {
+      const img = document.getElementById('heroImage');
+      img.onload = () => {
+        if (img.naturalWidth > img.naturalHeight) {
+          img.classList.remove('object-cover');
+          img.classList.add('object-contain', 'max-h-[350px]', 'sm:max-h-[400px]', 'md:max-h-[450px]');
+        } else {
+          img.classList.remove('object-contain');
+          img.classList.add('object-cover', 'max-h-[350px]', 'sm:max-h-[400px]', 'md:max-h-[450px]');
+        }
+      };
+    }
+    adjustHeroImage();
+
+    // Scroll Animation Trigger
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('fade-in', 'section-reveal', 'card-reveal');
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.section-reveal, .card-reveal').forEach(element => {
+      observer.observe(element);
+    });
+  </script>
+</body>
+</html>
